@@ -1,9 +1,10 @@
 from flask import request, render_template, redirect, url_for, Blueprint, jsonify
 import json
+import copy
 
 from app import app, s3_bucket_name, s3_bucket_object, db
 from app.constants import ID_PARAMETER, KEY_ATTRIBUTE, CONTENTS_ATTRIBUTE, S3_WEBLINK_STRUCTURE
-from app.utils import upload_to_s3
+from app.utils import upload_to_s3, get_file_size
 from app.models import S3File
 
 upload_to_s3_view = Blueprint('upload_to_s3_view', __name__)
@@ -39,8 +40,7 @@ def upload_files():
     response_list = []
     for file_object in files.getlist('user_file[]'):
         # file size
-        blob = file_object.read()
-        file_size = len(blob)
+        file_size = get_file_size(file_object)
 
         # file_mimetype
         file_mimetype = file_object.mimetype

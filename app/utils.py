@@ -11,3 +11,19 @@ def upload_to_s3(s3_bucket_object, file_object, s3_bucket_name):
             "ContentType": file_object.content_type
         }
     )
+
+
+def get_file_size(file_object):
+    if file_object.content_length:
+        return file_object.content_length
+
+    try:
+        position = file_object.tell()
+        file_object.seek(0, 2)  # seek to end
+        size = file_object.tell()
+        file_object.seek(position)  # back to original position
+        return size
+    except (AttributeError, IOError):
+        pass
+
+    return 0
